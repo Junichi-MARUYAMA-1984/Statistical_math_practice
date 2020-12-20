@@ -15,11 +15,14 @@ a <- rnorm(1); b <- rnorm(1) # 直線の係数をランダムに生成
 N <- 100
 x <- rnorm(N); y <- a * x + b + rnorm(N) # 直線の周りの点をランダムに生成
 plot(x, y); abline(h = 0); abline(v = 0) # 点のプロット
+
 min_sq_bf <- min_sq(x, y)
 abline(min_sq_bf$a, min_sq_bf$b, col = "red") #中心化前の直線
+
 x <- x - mean(x); y <- y - mean(y) # 中心化
 min_sq_af <- min_sq(x, y)
 abline(min_sq_af$a, min_sq_af$b, col = "blue") # 中心化後の直線
+
 legend("topleft", c("中心化前", "中心化後"),
        lty = 1,
        col = c("red", "blue")) # 凡例
