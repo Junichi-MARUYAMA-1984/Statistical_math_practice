@@ -1,6 +1,9 @@
 # Clear environment
 rm(list = ls())
 
+# Setting Japanese font (for MacOSX)
+# par(family= "HiraKakuProN-W3")
+
 # Chapter1 e.g.19
 # 最小二乗法の切片と傾きを求める関数min_sq
 min_sq <- function(x, y) {
