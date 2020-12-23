@@ -18,7 +18,7 @@ U <- solve(t(X) %*% X) # t(X) %*% Xの逆行列
 beta_hat <- U %*% t(X) %*% y # 回帰係数
 RSS <- sum((y - X %*% beta_hat)^2) # 残差二乗和
 RSE <- sqrt(RSS / (N - p - 1)) # beta_hatの平均値の標準誤差
-alpha <- 0.05 # 有意水準
+alpha <- 0.01 # 危険率 
 f <- function(x, a) { # a = 0なら信頼区間。a = 1なら予測区間。
   x <- cbind(1, x)
   range <- qt(df = N - p - 1, 1 - alpha / 2) * RSE * sqrt(a + x %*% U %*% t(x))
@@ -32,7 +32,7 @@ x_seq <- seq(-10, 10, 0.1)
 lower_seq <- NULL
 upper_seq <- NULL
 for (x in x_seq) {
-  ci_ul <- f(x, 0)
+  ci_ul <- f(x, 0) # 信頼区間値の取得
   lower_seq <- c(lower_seq, ci_ul$lower)
   upper_seq <- c(upper_seq, ci_ul$upper)
 }
@@ -58,7 +58,7 @@ par(new = TRUE)
 lower_seq <- NULL
 upper_seq <- NULL
 for (x in x_seq) {
-  pi_ul <- f(x, 1)
+  pi_ul <- f(x, 1) # 予測区間値の取得
   lower_seq <- c(lower_seq, pi_ul$lower)
   upper_seq <- c(upper_seq, pi_ul$upper)
 }
