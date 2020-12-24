@@ -38,7 +38,7 @@ gamma_hat <- rnorm(p + 1)
 # ステップ間のbeta要素推定値の差の二乗和が0.001を下回ったら収束したと判断する。
 while (sum((beta_hat - gamma_hat)^2) > 0.001) {
   beta_hat <- gamma_hat
-  s <- as.vector(X %*% beta)
+  s <- as.vector(X %*% beta_hat)
   v <- exp(-s * y)
   u <- y * v / (1 + v)
   w <- v / (1 + v)^2
