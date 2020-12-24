@@ -37,6 +37,15 @@ while (sum((beta_hat - gamma_hat)^2) > 0.001) {
   print(gamma_hat)
 }
 
+# ロジスティック曲線の描画
+f <- function(x) {
+  exp(gamma_hat[1] + gamma_hat[2] * x) / (1 + exp(gamma_hat[1] + gamma_hat[2] * x))
+}
+plot(f, xlim = c(-2, 2), ylim = c(0, 1),
+     xlab = "x", ylab = "P(Y = 1 | x)",
+     col = 1,
+     main = "ロジスティック曲線")
+
 # 作成したロジスティック回帰モデルの性能を確認。
 # 
 # モデルにより定義される「y = -1となる確率1 / (1 + exp(s))」を考えたとき、
