@@ -5,20 +5,21 @@ rm(list = ls())
 # par(family= "HiraKakuProN-W3")
 
 # Chapter1 e.g.28
-# データ生成
-N <- 100
-p <- 1 # 単回帰
-X <- matrix(rnorm(N * p), ncol = p); X <- cbind(rep(1, N), X)
-beta <- c(1, 1)
-epsilon <- rnorm(N)
-y <- X %*% beta + epsilon
+# 観測データ生成
+N <- 100 # データ数
+p <- 1 # 説明変数は一個で単回帰とする
+X <- matrix(rnorm(N * p), ncol = p); X <- cbind(rep(1, N), X) # 説明変数行列の作成
+beta <- c(1, 1) # yとXを関係付ける真のパラメタ。線形回帰によりこの値を推定する。
+epsilon <- rnorm(N) # 誤差 ~ N(0, 1)
+y <- X %*% beta + epsilon # パラメタbetaによりXからyを生成。
+                          # ここで得られた(X, y)が今回の線形回帰に用いる観測データとなる。
 
 # 信頼区間または予測区間を返す関数f(x)を定義。
 U <- solve(t(X) %*% X) # t(X) %*% Xの逆行列
-beta_hat <- U %*% t(X) %*% y # 回帰係数
+beta_hat <- U %*% t(X) %*% y # 回帰係数。すなわちパラメタbetaの推定値。
 RSS <- sum((y - X %*% beta_hat)^2) # 残差二乗和
-RSE <- sqrt(RSS / (N - p - 1)) # beta_hatの平均値の標準誤差
-alpha <- 0.01 # 危険率 
+RSE <- sqrt(RSS / (N - p - 1)) # beta_hatの平均値の標準誤差。すなわちパラメタbeta推定値の標準誤差。
+alpha <- 0.05 # 危険率。信頼・予測区間は(1 - alpha) x 100%信頼・予測区間となる。
 f <- function(x, a) { # a = 0なら信頼区間。a = 1なら予測区間。
   x <- cbind(1, x)
   range <- qt(df = N - p - 1, 1 - alpha / 2) * RSE * sqrt(a + x %*% U %*% t(x))
