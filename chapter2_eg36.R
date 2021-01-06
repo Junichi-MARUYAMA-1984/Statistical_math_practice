@@ -46,12 +46,14 @@ g <- function(v, j) {
 
 # テストデータにおけるアヤメ種判別処理
 z <- array(dim = n / 2) # 判別結果（アヤメ種の番号）保存用配列
+k <- 1 # zのインデックス変数
 prob <- array(1:3) # 各アヤメ種のもとでその説明変数値を取る確率
 for (i in test) {
   u <- as.matrix(df[i, 1:4]) # 説明変数データの取得
   for (j in 1:3) {
     prob[j] <- g(u, j) # jがアヤメ種の種番号に対応する。
   }
-  z[i] <- which.max(prob) # 最も確率の高いアヤメ種の種番号を保存
+  z[k] <- which.max(prob) # 最も確率の高いアヤメ種の種番号を保存
+  k <- k + 1
 }
-table(z[test], df[test, 5]) # 判別結果と正解データの比較
+table(z, df[test, 5]) # 判別結果と正解データの比較
