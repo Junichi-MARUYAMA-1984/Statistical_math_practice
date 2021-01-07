@@ -21,7 +21,7 @@ cv_linear <- function(X, y, k) {
     test <- ((j - 1) * m + 1):(j * m) # テストデータグループの選択
     beta <- solve(t(X[-test, ]) %*% X[-test, ]) %*% t(X[-test, ]) %*% y[-test] # 回帰係数推定値の計算
     e <- y[test] - X[test, ] %*% beta # 残差y - y_hatを計算
-    S <- S + drop(t(e) %*% e) # eのL2ノルム（RSS）を計算し、スカラー値に変換してからSに加える。
+    S <- S + drop(t(e) %*% e) # eの各要素の二乗和を計算し、スカラー値に変換してからSに加える。
   }
   return(S/n)
 }
