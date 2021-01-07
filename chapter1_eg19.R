@@ -20,7 +20,7 @@ x <- rnorm(N); y <- a * x + b + rnorm(N) # 直線の周りの点をランダム�
 plot(x, y); abline(h = 0); abline(v = 0) # 点のプロット
 
 min_sq_bf <- min_sq(x, y)
-abline(min_sq_bf$a, min_sq_bf$b, col = "red") #中心化前の直線
+abline(min_sq_bf$a, min_sq_bf$b, col = "red") # 中心化前の直線
 
 x <- x - mean(x); y <- y - mean(y) # 中心化
 min_sq_af <- min_sq(x, y)
