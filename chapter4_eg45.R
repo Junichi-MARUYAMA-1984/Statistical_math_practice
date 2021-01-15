@@ -7,7 +7,7 @@ rm(list = ls())
 # Setting Japanese font (for MacOSX)
 # par(family= "HiraKakuProN-W3")
 
-# Chapter3 e.g.45
+# Chapter4 e.g.45
 # 赤池情報量基準(AIC)の実装。
 
 # RSS_k = min_{k(S) = k} RSS(S) を算出する関数。
