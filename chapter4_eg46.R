@@ -7,7 +7,7 @@ rm(list = ls())
 # Setting Japanese font (for MacOSX)
 # par(family= "HiraKakuProN-W3")
 
-# Chapter3 e.g.46
+# Chapter4 e.g.46
 
 # RSS_k = min_{k(S) = k} RSS(S) を算出する関数。
 # k_matrixは、集合{1, ..., p}における大きさkの部分集合を列に持つ、
