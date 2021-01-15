@@ -63,7 +63,7 @@ V <- NULL # 各k値における処理時間
 for (k in 10:n) {
   if (n %% k == 0) {
     t <- proc.time()[3]
-    cv_fast(x, y, k)
+    cv_fast(X, y, k)
     U <- c(U, k)
     V <- c(V, (proc.time()[3] - t))
   }
@@ -76,7 +76,7 @@ V <- NULL
 for (k in 10:n) {
   if (n %% k == 0) {
     t <- proc.time()[3]
-    cv_linear(x, y, k)
+    cv_linear(X, y, k)
     U <- c(U, k)
     V <- c(V, (proc.time()[3] - t))
   }
