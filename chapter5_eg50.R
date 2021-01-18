@@ -44,10 +44,10 @@ df <- read.table("crime.txt")
 x <- df[, 3:7]
 y <- df[, 1]
 p <- ncol(x)
-lambda_seq <- seq(0, 100, 0.1)
+lambda_seq <- seq(0, 200, 0.1)
 coef_seq <- lambda_seq
 plot(lambda_seq, coef_seq,
-     xlim = c(0, 100), ylim = c(-40, 40),
+     xlim = c(0, 200), ylim = c(-40, 40),
      xlab = "lambda", ylab = "beta",
      main = "各lambdaについての各係数の値",
      type = "n",
