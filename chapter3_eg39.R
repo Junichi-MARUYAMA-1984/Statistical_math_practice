@@ -23,7 +23,7 @@ cv_linear <- function(X, y, k) {
     e <- y[test] - X[test, ] %*% beta # 残差y - y_hatを計算
     S <- S + drop(t(e) %*% e) # eのL2ノルム（RSS）を計算し、スカラー値に変換してからSに加える。
   }
-  return(S/n)
+  return(S / n) # Sを総サンプル数で標準化して、CVの結果とする。
 }
 
 # k-fold CVの実際。
