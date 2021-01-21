@@ -43,7 +43,7 @@ for (i in 1:n) {
     X[i, j + 4] <- max((x[i] - knots[j]) ^ 3, 0)
   }
 }
-beta <- solve(t(X) %*% X) %*% t(X) %*% y
+beta <- solve(t(X) %*% X) %*% t(X) %*% y # 最小二乗推定値の計算
 f <- function(x) {
   S <- beta[1] + beta[2] * x + beta[3] * x ^ 2 + beta[4] * x ^ 3
   for (j in 1:K) {
@@ -60,7 +60,7 @@ for (j in 2:K) {
     X[i, j] <- h(j, x[i], knots)
   }
 }
-gamma <- solve(t(X) %*% X) %*% t(X) %*% y
+gamma <- solve(t(X) %*% X) %*% t(X) %*% y # 最小二乗推定値の計算
 g <- function(x) {
   S <- gamma[1]
   for (j in 2:K) {
@@ -70,8 +70,8 @@ g <- function(x) {
 }
 
 # グラフ描画
-u_seq <- seq(-6, 6, 0.02)
-v_seq <- NULL
+u_seq <- seq(-6, 6, 0.02) # スプライン曲線描画用x値
+v_seq <- NULL # 通常のスプライン曲線描画用y値
 for (u in u_seq) {
   v_seq <- c(v_seq, f(u))
 }
@@ -80,7 +80,7 @@ plot(u_seq, v_seq,
      yaxt = "n",
      xlab = "x", ylab = "f(x), g(x)")
 par(new = TRUE)
-w_seq <- NULL
+w_seq <- NULL # 自然なスプライン回帰による曲線描画用y値
 for (u in u_seq) {
   w_seq <- c(w_seq, g(u))
 }
