@@ -8,14 +8,12 @@ rm(list = ls())
 # 一般の多項式回帰
 
 # 偶関数に近いデータの作成。
-# このコードの場合、テキストの(6.1)式とは違う関数のグラフが出力される。
-# しかしながら、こいつの場合の方がcos(x)の当てはまりが良くなっている。
-# 恐らく、x = 0周辺の周期が他の部分と同じか異なるかに依るのであろう。
 n <- 100
 x <- rnorm(n) * pi
-y <- round(x) %% 2 * 2 - 1 + rnorm(n) * 0.2
+y <- 1 - floor(abs(x)) %% 2 * 2 + rnorm(n) * 0.2
 plot(x, y, 
      xaxt = "n", yaxt = "n",
+     xlim = c(-5, 5), ylim = c(-2, 2),
      # ann = FALSE, 
      main = "偶関数の乱数をsin, cosで追従")
 
@@ -26,7 +24,9 @@ f <- function(x) {
   beta[1] + beta[2] * cos(x) + beta[3] * cos(2 * x) + beta[4] * cos(3 * x)
 }
 par(new = TRUE)
-curve(f(x), -5, 5, col = "red", yaxt = "n", ann = FALSE)
+curve(f(x), -5, 5, col = "red", 
+      yaxt = "n", ann = FALSE,
+      xlim = c(-5, 5), ylim = c(-2, 2))
 
 # 基底としてsin(x)を使用した場合の多項式回帰。
 X <- cbind(1, sin(x), sin(2 * x), sin(3 * x))
@@ -35,7 +35,12 @@ g <- function(x) {
   beta[1] + beta[2] * sin(x) + beta[3] * sin(2 * x) + beta[4] * sin(3 * x)
 }
 par(new = TRUE)
-curve(g(x), -5, 5, col = "blue", yaxt = "n", ann = FALSE)
+curve(g(x), -5, 5, col = "blue", 
+      yaxt = "n", ann = FALSE,
+      xlim = c(-5, 5), ylim = c(-2, 2))
 
 # ノイズを除去した元関数のグラフ
-curve(round(x) %% 2 * 2 - 1, -3, 3)
+par(new = TRUE)
+curve(1 - floor(abs(x)) %% 2 * 2, -5, 5, col = "gray",
+      ann = FALSE,
+      xlim = c(-5, 5), ylim = c(-2, 2))
