@@ -2,7 +2,7 @@
 rm(list = ls())
 
 # Setting Japanese font (for MacOSX)
-par(family= "HiraKakuProN-W3")
+# par(family= "HiraKakuProN-W3")
 
 # Chapter6 e.g.60
 # Nadaraya-Watson推定量はカーネル密度推定の回帰版であり、
