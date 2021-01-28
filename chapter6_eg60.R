@@ -2,7 +2,7 @@
 rm(list = ls())
 
 # Setting Japanese font (for MacOSX)
-# par(family= "HiraKakuProN-W3")
+par(family= "HiraKakuProN-W3")
 
 # Chapter6 e.g.60
 # Nadaraya-Watson推定量はカーネル密度推定の回帰版であり、
@@ -89,6 +89,7 @@ for (lambda in lambda_seq) {
       SS <- SS + (y[j] - z) ^ 2 # 各テストデータy値とその推定値間の二乗誤差を計算し、総和を記録する。これが当該lambda値におけるCV評価値となる。
     }
   }
+  print(SS) # CV評価値を標準出力へ。
   if (SS < SS_min) {
     SS_min <- SS
     lambda_best <- lambda # 最小CV評価値を叩き出したlambda値（=最適lambda値）を記録。
