@@ -22,7 +22,7 @@ sq_loss <- function(y) {
 
 # 分岐処理を行う関数branch(x, y, f, S, m)
 # x: 全説明変数データ。説明変数行列の形で受け取る。
-# y: 全応答変数データ
+# y: 全応答変数データ。
 # f: 分岐を評価する損失関数
 # S: 分岐を評価するデータの添字集合
 # m: 説明変数に含まれる要素数（実際は利用されていない！）
@@ -58,8 +58,16 @@ branch <- function(x, y, f, S, m = ncol(x)) {
   return(info)
 }
 
+# 決定木構成を行う関数dt(x, y, f, alpha, n_min, m)
+# x: 全説明変数データ。説明変数行列の形で受け取る。
+# y: 全応答変数データ。
+# f: 分岐を評価する損失関数。デフォルト引数としてsq_lossを取る。
+# alpha: 式(7.3)におけるパラメタalpha。
+# n_min: 各頂点において分岐処理を行うか否かを決定する閾値データ数。
+# m: 説明変数に含まれる要素数。
 dt <- function(x, y, 
                f = "sq_loss", alpha = 0, n_min = 1, m = ncol(x)) {
+  # 損失関数の決定
   if (f == "sq_loss") {
     g <- sq_loss
   } else if (f == "mis_match") {
@@ -69,79 +77,111 @@ dt <- function(x, y,
   } else {
     g <- entropy
   }
-  n <- length(y)
-  stack <- list()
-  stack[[1]] <- list(parent = 0, set = 1:n, score = g(y))
-  vertex <- list()
-  k <- 0
+  
+  n <- length(y) # 総データ数
+  stack <- list() # 決定木構成に用いるスタック。
+  # stackの各要素stack[[i]]は、
+  # i番目の頂点に関する属性情報を保持するlist型変数。
+  # parent: 親頂点の番号。
+  # set: 子となるデータの添字集合。
+  # score: 子となるデータ集合の損失関数値。
+  stack[[1]] <- list(parent = 0, set = 1:n, score = g(y)) # i = 1の頂点は根。
+  vertex <- list() # i番目の頂点に関する属性情報を保持するlist型変数。
+  # vertex[[i]]の各要素について：
+  # parent: 親頂点の番号。
+  # set: その頂点に割り振られたデータの添字集合。
+  # th: （子頂点を持っている場合、）分岐処理を行った際の基準値として用いたデータ値。
+  # j: （子頂点を持っている場合、）分岐処理を行った際の基準として用いた「説明変数の要素」の番号。端点では0とする。
+  k <- 0 # 頂点番号管理用変数
+  
+  # 処理待ちスタックが0になるまで分岐処理を行う。
   while (length(stack) > 0) {
-    r <- length(stack)
-    node <- stack[[r]]
-    stack <- stack[-r]
+    r <- length(stack) # 決定木構成処理待ち頂点の数
+    node <- stack[[r]] # スタックの一番上にある頂点を処理対象とする。
+    stack <- stack[-r] # POP処理とするので、スタックの一番上にある頂点を削除。
     k <- k + 1
-    res <- branch(x, y, g, node$set, m)
-    if (node$score - res$score < alpha ||
+    res <- branch(x, y, g, node$set, m) # 処理対象頂点において分岐処理を実行。
+    # 以下の条件に当てはまる場合は、分岐処理を止めて、当該頂点を端点として管理する。
+    # i) 分岐処理を行う前と行った後のscore差がalphaより小さい場合。
+    # ii) 当該頂点におけるデータ数がn_minより小さい場合。
+    # iii) 子頂点に割り振られたデータ集合が一つでも空集合となった場合。
+    if (node$score - res$score < alpha || 
         length(node$set) < n_min ||
         length(res$left) == 0 ||
         length(res$right) == 0) {
       vertex[[k]] <- list(parent = node$parent, j = 0, set = node$set)
     } else {
+      # 分岐処理を行う場合は、当該頂点を内点として管理する。
+      # かつ、生成された子頂点の情報を処理待ちスタックに追加する。
       vertex[[k]] <- list(parent = node$parent, set = node$set, 
                           th = x[res$i, res$j], j = res$j)
       stack[[r]] <- list(parent = k, set = res$right, score = res$right_score)
       stack[[r + 1]] <- list(parent = k, set = res$left, score = res$left_score)
     }
   }
+  
+  # 出来上がった木データvertexの整形。
+  # 左右の子頂点の番号情報をleft, rightとして付与する。端点の場合は値を0とする。
+  # 頂点が端点であれば、割り振られたデータの応答変数値の最頻値情報または平均値情報をcenterとして付与する。
+  
+  # 最頻値計算用関数mode(y)
   mode <- function(y) {
     names(sort(table(y), decreasing = TRUE))[1]
   }
-  r <- length(vertex)
+  r <- length(vertex) # 木に含まれる頂点数
   for (h in 1:r) {
-    vertex[[h]]$left <- 0; vertex[[h]]$right <- 0
+    vertex[[h]]$left <- 0; vertex[[h]]$right <- 0 # 各頂点の左右子頂点の番号を0で初期化。
   }
-  for (h in r:2) {
-    pa <- vertex[[h]]$parent
-    if (vertex[[pa]]$right == 0) {
+  for (h in r:2) { # 端点から根に向かって遡って処理を行う。
+    pa <- vertex[[h]]$parent # 当該頂点の親頂点の頂点番号。
+    if (vertex[[pa]]$right == 0) { # 子頂点番号情報は左の方が小さくなるように付与する。
       vertex[[pa]]$right <- h
     } else {
       vertex[[pa]]$left <- h
     }
   }
+  # 損失関数がsq_lossの場合は、当該頂点における応答変数値の平均値情報を付与する。
+  # それ以外の損失関数の場合は、当該頂点における応答変数値の最頻値情報を付与する。
   if (f == "sq_loss") {
     g <- mean
   } else {
     g <- mode
   }
   for (h in 1:r) {
-    if (vertex[[h]]$j == 0) {
-      vertex[[h]]$center <- g(y[vertex[[h]]$set])
+    if (vertex[[h]]$j == 0) { # 以下の処理は端点の時のみ。
+      vertex[[h]]$center <- g(y[vertex[[h]]$set]) # 最頻値情報or平均値情報をcenterとして付与。
     }
   }
   return(vertex)
 }
 
+# Bostonデータセットを用いて決定木を作成。
 x <- as.matrix(Boston[, 1:13])
 y <- as.vector(Boston[, 14])
-vertex <- dt(x, y, n_min = 50)
+vertex <- dt(x, y, n_min = 50) # 各端点には最低50個のデータが割り振られる。
 r <- length(vertex)
-col <- array(dim = r)
-edge_list <- matrix(nrow = r, ncol = 2)
+col <- array(dim = r) # 各頂点において分岐処理の基準として用いた「説明変数の要素」の番号。端点では0。
+edge_list <- matrix(nrow = r, ncol = 2) # igraphで木を描画する際に必要な木構造情報。
 for (h in 1:r) {
   col[h] <- vertex[[h]]$j
   edge_list[h, ] <- c(vertex[[h]]$parent, h)
 }
-edge_list <- edge_list[-1, ]
+edge_list <- edge_list[-1, ] # 根の情報は除く。
 g <- graph_from_edgelist(edge_list)
-V(g)$color <- col
-plot(g, layout = layout.reingold.tilford(g, root = 1))
-VAR <- NULL
-TH <- NULL
+V(g)$color <- col # 各頂点の色は、分岐処理の基準として用いた「説明変数の要素」を意味する。
+plot(g, layout = layout.reingold.tilford(g, root = 1)) # 決定木の描画
+
+# 各分岐処理のログを表示
+NODE <- NULL # 分岐処理を行った頂点（内点）の番号
+VAR <- NULL # 分岐処理の基準として用いた説明変数の要素の番号
+TH <- NULL # 分岐処理の基準値として用いたデータ値
 for (h in 1:r) {
   if (vertex[[h]]$j != 0) {
     j <- vertex[[h]]$j
     th <- vertex[[h]]$th
+    NODE <- c(NODE, h)
     VAR <- c(VAR, j)
     TH <- c(TH, th)
   }
 }
-print(cbind(VAR, TH))
+print(cbind(NODE, VAR, TH))
