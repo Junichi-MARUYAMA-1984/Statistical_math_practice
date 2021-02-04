@@ -78,7 +78,7 @@ branch <- function(x, y, f, S, m = ncol(x)) {
   } else {
     T <- 1:p
   }
-  for (j in 1:T) { # 分岐評価に用いる要素として、説明変数要素を添字集合Tに従ってなめる。
+  for (j in T) { # 分岐評価に用いる要素として、説明変数要素を添字集合Tに従ってなめる。
     for (i in S) { # 分岐評価に用いるデータとして、評価対象データ集合の全データをなめる。
       left <- NULL; right <- NULL # 分岐先のデータ集合
       for (k in S) {
@@ -253,7 +253,7 @@ for (m in 4:1) {
 }
 
 plot(1:B, rf(res_m[[4]]) - 0.1, type = "l",
-     ylim = c(0, 50), col = 2,
+     ylim = c(35, 50), col = 2,
      xlab = "木の生成回数", ylab = "正答回数/50回",
      main = "ランダムフォレスト")
 lines(1:B, rf(res_m[[3]]), col = 3)
