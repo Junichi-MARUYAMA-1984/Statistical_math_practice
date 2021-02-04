@@ -227,7 +227,7 @@ rf <- function(z) {
 
 # irisデータセットを用いてランダムフォレストを実行。
 # データ生成
-set.seed(101)
+# set.seed(101) # 乱数シードは敢えて設定しないようにしてみる。
 df <- iris
 n <- nrow(df)
 p <- ncol(df)
