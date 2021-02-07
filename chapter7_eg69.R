@@ -219,29 +219,29 @@ value <- function(u, vertex) {
 df <- Boston
 x <- as.matrix(df[, 1:13])
 y <- as.matrix(df[, 14])
-train <- 1:200
-test <- 201:300
-B <- 100
-lambda <- 0.1
-d <- 2
-trees <- list()
-r <- y[train]
+train <- 1:200 # 学習用データ
+test <- 201:300 # テストデータ
+B <- 100 # ブースティングで作成する決定木の個数
+lambda <- 0.1 # ブースティング式中のlambda（shrinking factor）
+d <- 2 # 一個当たりの決定木中に含まれる内点の個数
+trees <- list() # 作成された決定木を保存するリスト型変数
+r <- y[train] # 応答変数値の正解値
 for (b in 1:B) {
-  trees[[b]] <- b_dt(x[train, ], r, d)
+  trees[[b]] <- b_dt(x[train, ], r, d) # 決定木作成
   for (i in train) {
-    r[i] <- r[i] - lambda * value(x[i, ], trees[[b]])
+    r[i] <- r[i] - lambda * value(x[i, ], trees[[b]]) # rの更新処理
   }
 }
-z <- array(0, dim = c(B, 600))
+z <- array(0, dim = c(B, 600)) # 決定木による応答変数推定値記録用配列
 for (i in test) {
-  z[1, i] <- lambda * value(x[i, ], trees[[1]])
+  z[1, i] <- lambda * value(x[i, ], trees[[1]]) # b = 1の決定木による推定値計算
 }
 for (b in 2:B) {
   for (i in test) {
-    z[b, i] <- z[b - 1, i] + lambda * value(x[i, ], trees[[b]])
+    z[b, i] <- z[b - 1, i] + lambda * value(x[i, ], trees[[b]]) # b = 1以降のbに関する決定木を用いて推定値を逐次計算
   }
 }
-out <- NULL
+out <- NULL # 各b値における決定木を用いた応答変数推定値の二乗誤差を記録する配列
 for (b in 1:B) {
   out <- c(out, sum((y[test] - z[b, test]) ^ 2) / length(test))
 }
@@ -255,3 +255,7 @@ legend("topright",
        legend = c("d = 2"),
        col = c("blue"),
        lty = 1)
+
+# テキスト中ではd = 1, d = 3の場合も計算しているが、
+# このままでは計算時間がめちゃくちゃかかるので、
+# もしやるのならばコードの効率化が必要。
