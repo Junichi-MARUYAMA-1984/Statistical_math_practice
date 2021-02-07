@@ -9,10 +9,13 @@ rm(list = ls())
 
 # Chapter8 e.g.77
 # 非線形カーネルを用いたサポートベクトルマシン
+
+# 通常の内積<x, y>を用いたカーネル関数K_linear(x, y)
 K_linear <- function(x, y) {
   return(t(x) %*% y)
 }
 
+# 多項式カーネル(1 + <x, y>)^2を用いたカーネル関数K_poly(x, y)
 K_poly <- function(x, y) {
   return((1 + t(x) %*% y) ^ 2)
 }
