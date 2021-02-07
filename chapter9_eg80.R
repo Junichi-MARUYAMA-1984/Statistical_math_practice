@@ -1,5 +1,4 @@
 # Load library
-library(e1071)
 
 # Clear environment
 rm(list = ls())
