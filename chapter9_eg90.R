@@ -21,7 +21,7 @@ n <- 100
 p <- 5
 X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 for (j in 1:p) {
-  X[, j] <- x[, j] - mean(X[, j])
+  X[, j] <- X[, j] - mean(X[, j])
 }
 y <- X[, 1] + X[, 2] + X[, 3] + X[, 4] + X[, 5] + rnorm(n)
 y <- y - mean(y)
