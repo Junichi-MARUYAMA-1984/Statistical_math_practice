@@ -14,11 +14,10 @@ rm(list = ls())
 # サイズk x pCk（pCkは二項係数(p k)^Tのこと）の行列。
 RSS_min <- function(X, y, k_matrix) {
   m <- ncol(k_matrix) # RSSを評価する説明変数集合Sの数
-  n_ <- length(y) # サンプル数
   S_min <- Inf # RSS(S)の最小値
   for (j in 1:m) {
     q <- k_matrix[, j] # 説明変数集合Sを取得。
-    S <- sum((lm(y ~ X[, q])$fitted.values - y) ^ 2) / n_ # RSS(S)を計算。
+    S <- sum((lm(y ~ X[, q])$fitted.values - y) ^ 2) # RSS(S)を計算。
     if (S < S_min) { # より小さいRSS(S)が出てきたら、S_minとその時の説明変数集合set_qを更新。
       S_min <- S
       set_q <- q
